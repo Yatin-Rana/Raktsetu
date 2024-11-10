@@ -14,7 +14,6 @@ const ProfilePage = () => {
     });
     const navigate = useNavigate();
 
-    // Get the userId from localStorage
     const userId = localStorage.getItem('userId');
 
     useEffect(() => {
@@ -79,7 +78,7 @@ const ProfilePage = () => {
         try {
             const response = await axios.put(`http://localhost:3006/profile?userId=${userId}`, formData);
             setUser(response.data);
-            setIsEditing(false); // Exit edit mode
+            setIsEditing(false);
         } catch (err) {
             setError('Error updating profile');
             console.error('Profile update error:', err);
@@ -90,39 +89,40 @@ const ProfilePage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // If there's an error, show it
     if (error) {
         return (
-            <div className="flex justify-center items-center h-screen bg-gray-100">
-                <div className="p-4 bg-red-500 text-white rounded shadow-md">
+            <div className="flex justify-center items-center h-screen bg-red-50 fade-in">
+                <div className="p-4 bg-red-500 text-white rounded-lg shadow-md slide-in">
                     {error}
                 </div>
             </div>
         );
     }
 
-    // If user data is not loaded yet, show loading state
     if (!user) {
         return (
-            <div className="flex justify-center items-center h-screen bg-gray-100">
-                <div className="text-gray-700">Loading...</div>
+            <div className="flex justify-center items-center h-screen bg-gray-50 fade-in">
+                <div className="text-gray-700 animate-pulse">Loading...</div>
             </div>
         );
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-50">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h2 className="text-3xl font-semibold text-center mb-6 text-blue-600">User Profile</h2>
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-red-100 to-red-200 fade-in">
+            <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md slide-in">
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-red-600 animate-fadeIn">Raktsetu Profile</h2>
+                    <p className="text-gray-500 animate-fadeIn">Your lifesaving information</p>
+                </div>
 
                 {isEditing ? (
-                    <div className="space-y-4">
+                    <div className="space-y-4 animate-fadeIn">
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-300"
                             placeholder="Enter your name"
                         />
                         <input
@@ -130,7 +130,7 @@ const ProfilePage = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-300"
                             placeholder="Enter your email"
                         />
                         <input
@@ -138,7 +138,7 @@ const ProfilePage = () => {
                             name="bloodType"
                             value={formData.bloodType}
                             onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-300"
                             placeholder="Enter your blood type"
                         />
                         <input
@@ -146,41 +146,47 @@ const ProfilePage = () => {
                             name="location"
                             value={formData.location}
                             onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-300"
                             placeholder="Enter your location"
                         />
                     </div>
                 ) : (
-                    <div className="space-y-4">
-                        <p className="text-lg font-medium">Name: <span className="font-normal text-gray-600">{user.name}</span></p>
-                        <p className="text-lg font-medium">Email: <span className="font-normal text-gray-600">{user.email}</span></p>
-                        <p className="text-lg font-medium">Blood Type: <span className="font-normal text-gray-600">{user.bloodType}</span></p>
-                        <p className="text-lg font-medium">Location: <span className="font-normal text-gray-600">{user.location}</span></p>
+                    <div className="space-y-4 animate-fadeIn">
+                        <div className="flex items-center space-x-4 p-3 bg-red-50 rounded-lg transition duration-300 hover:bg-red-100">
+                            <span className="text-red-600 text-4xl font-bold animate-pulse">{user.bloodType}</span>
+                            <div>
+                                <p className="text-lg font-medium">{user.name}</p>
+                                <p className="text-gray-600">{user.email}</p>
+                            </div>
+                        </div>
+                        <p className="text-lg font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500 animate-bounce" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                            </svg>
+                            {user.location}
+                        </p>
                     </div>
                 )}
 
-                <div className="mt-6 text-center">
+                <div className="mt-8 space-y-4">
                     {isEditing ? (
                         <button
                             onClick={handleUpdateProfile}
-                            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                            className="w-full bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
                         >
                             Save Changes
                         </button>
                     ) : (
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-700"
+                            className="w-full bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
                         >
                             Edit Profile
                         </button>
                     )}
-                </div>
-
-                <div className="mt-6 text-center">
                     <button
                         onClick={handleDeleteProfile}
-                        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-700"
+                        className="w-full bg-gray-200 text-gray-800 py-3 px-4 rounded-md hover:bg-gray-300 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md"
                     >
                         Delete Profile
                     </button>
