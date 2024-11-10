@@ -10,14 +10,11 @@ const OrganiseCamp = () => {
     expectedDonors: '',
     additionalInfo: '',
   });
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // State to control modal visibility
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -26,135 +23,80 @@ const OrganiseCamp = () => {
       const response = await axios.post('http://localhost:3006/api/blood-camps', formData);
       console.log('Blood camp created:', response.data);
       setIsSuccessModalOpen(true);
-      
-       // Open the success modal
     } catch (error) {
       console.error('Error submitting camp details:', error);
       alert('There was an error creating the camp. Please try again.');
     }
   };
 
-  const closeModal = () => {
-    setIsSuccessModalOpen(false); // Close the modal
-  };
+  const closeModal = () => setIsSuccessModalOpen(false);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold text-center mb-6">Create a Blood Camp</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="organizerName">
-              Organizer Name
-            </label>
-            <input
-              type="text"
-              id="organizerName"
-              name="organizerName"
-              value={formData.organizerName}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="phone">
-              Phone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="location">
-              Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="campDate">
-              Camp Date
-            </label>
-            <input
-              type="date"
-              id="campDate"
-              name="campDate"
-              value={formData.campDate}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="expectedDonors">
-              Expected Donors
-            </label>
-            <input
-              type="number"
-              id="expectedDonors"
-              name="expectedDonors"
-              value={formData.expectedDonors}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700" htmlFor="additionalInfo">
-              Additional Info
-            </label>
-            <textarea
-              id="additionalInfo"
-              name="additionalInfo"
-              value={formData.additionalInfo}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              rows="4"
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-          >
-            Create Blood Camp
-          </button>
-        </form>
-      </div>
-
-      {/* Success Modal */}
-      {isSuccessModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h3 className="text-xl font-semibold text-center">Blood Camp Created Successfully!</h3>
-            <p className="mt-4 text-center">Your blood camp has been successfully scheduled. Thank you for your effort!</p>
-            <div className="mt-6 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-red-100 to-red-200 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div className="px-6 py-8">
+          <h2 className="text-3xl font-extrabold text-center text-gray-900 mb-8">Create a Blood Camp</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {[
+              { label: 'Organizer Name', name: 'organizerName', type: 'text' },
+              { label: 'Phone', name: 'phone', type: 'tel' },
+              { label: 'Location', name: 'location', type: 'text' },
+              { label: 'Camp Date', name: 'campDate', type: 'date' },
+              { label: 'Expected Donors', name: 'expectedDonors', type: 'number' },
+            ].map((field) => (
+              <div key={field.name}>
+                <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                  {field.label}
+                </label>
+                <input
+                  type={field.type}
+                  id={field.name}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                  required
+                />
+              </div>
+            ))}
+            <div>
+              <label htmlFor="additionalInfo" className="block text-sm font-medium text-gray-700">
+                Additional Info
+              </label>
+              <textarea
+                id="additionalInfo"
+                name="additionalInfo"
+                rows="4"
+                value={formData.additionalInfo}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              ></textarea>
+            </div>
+            <div>
               <button
-                onClick={closeModal}
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
               >
-                Close
+                Create Blood Camp
               </button>
             </div>
+          </form>
+        </div>
+      </div>
+
+      {isSuccessModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-sm w-full">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Success!</h3>
+            <p className="text-gray-600 text-center mb-6">
+              Your blood camp has been successfully scheduled. Thank you for your effort!
+            </p>
+            <button
+              onClick={closeModal}
+              className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-150 ease-in-out"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
