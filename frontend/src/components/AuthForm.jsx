@@ -6,7 +6,7 @@ import authState from '../authState';
 
 // Create an axios instance with a base URL
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api' // Replace with your actual API base URL
+  baseURL: 'http://localhost:3006/api' // Replace with your actual API base URL
 });
 
 const AuthForm = () => {
@@ -16,7 +16,8 @@ const AuthForm = () => {
     email: '',
     password: '',
     bloodType: '',
-    location: ''
+    location: '',
+    mobile: ''
   });
 
   const [error, setError] = useState('');
@@ -45,9 +46,14 @@ const AuthForm = () => {
       const response = await api.post(endpoint, dataToSend);
 
       console.log(response.data);
-      
+
       localStorage.setItem('token', response.data.token);
-      setAuth({isLoggedIn: true, token: response.data.token});
+      setAuth({ isLoggedIn: true, token: response.data.token });
+      // const name = response.data.name;
+
+      const userId = response.data.user.id;
+      // localStorage.setItem('name',name)
+      localStorage.setItem('userId', userId)
 
       navigate('/');
     } catch (error) {
@@ -65,7 +71,8 @@ const AuthForm = () => {
       email: '',
       password: '',
       bloodType: '',
-      location: ''
+      location: '',
+      mobile: ''
     });
     setError('');
   };
@@ -125,6 +132,18 @@ const AuthForm = () => {
             </div>
             {isSignUp && (
               <>
+                <div className="mb-4">
+                  <input
+                    id="mobile"
+                    name="mobile"
+                    type="text"
+                    required
+                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
+                    placeholder="Mobile Number"
+                    value={formData.mobile}
+                    onChange={handleInputChange}
+                  />
+                </div>
                 <div className="mb-4">
                   <select
                     id="bloodType"

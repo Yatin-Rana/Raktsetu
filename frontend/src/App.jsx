@@ -15,8 +15,9 @@ import FAQPage from './pages/FAQPage';
 import Donate from './pages/Donate';
 import FindDonors from './pages/FindDonors';
 import Centers from './pages/Centers';
-import HistoryPage from './pages/HistoryPage';
+// import HistoryPage from './pages/HistoryPage';
 import Appointmets from './pages/Appointmets';
+import ViewScheduledCamps from './pages/ViewScheduledCamps';
 
 
 function App() {
@@ -58,8 +59,9 @@ function App() {
       <Route path="/donate" element={<Donate/>} />
       <Route path="/find-donor" element={<FindDonors />} />
       <Route path="/centers" element={<Centers/>} />
-      <Route path="/history" element={<HistoryPage />} />
-      <Route path="/appointments" element={<Appointmets />} />
+      {/* <Route path="/history" element={<HistoryPage />} /> */}
+      {/* <Route path="/appointments" element={<Appointmets />} /> */}
+      <Route path="/view-scheduled-bloodcamps" element={<ViewScheduledCamps />} />
       
 
 

@@ -14,27 +14,29 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  name        String
-  email       String        @unique
-  password    String
-  bloodType   BloodTypeEnum?
-  location    String?
-  donations   Donation[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id        Int            @id @default(autoincrement())
+  name      String
+  email     String         @unique
+  password  String
+  mobile    String         @default("N/A")
+  bloodType BloodTypeEnum?
+  location  String?
+  donations Donation[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+   
 }
 
-model Donation {
-  id           Int      @id @default(autoincrement())
-  userId       Int
-  user         User     @relation(fields: [userId], references: [id])
-  donationDate DateTime
-  location     String?
-  notes        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
+// model Donation {
+//   id           Int      @id @default(autoincrement())
+//   userId       Int
+//   user         User     @relation(fields: [userId], references: [id])
+//   donationDate DateTime
+//   location     String?
+//   notes        String?
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
+// }
 
 enum BloodTypeEnum {
   A_POSITIVE
@@ -46,3 +48,55 @@ enum BloodTypeEnum {
   O_POSITIVE
   O_NEGATIVE
 }
+
+model Hospital {
+  id       Int      @id @default(autoincrement())
+  name     String
+  address  String
+  city     String
+  state    String
+  zipCode  String
+  phone    String
+  email    String
+  website  String?
+  capacity Int
+}
+
+model Donation {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  donationDate DateTime
+  donationType String
+  amount       Int      // You can use Int or Decimal depending on the units you use
+  location     String
+  status       String
+  bloodType    String
+  campaign     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Camp {
+  id              Int      @id @default(autoincrement())
+  organizerName   String
+  phone           String
+  location        String
+  campDate        DateTime
+  expectedDonors  Int
+  additionalInfo  String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+
+
+// model BloodBank {
+//   id        Int       @id @default(autoincrement())
+//   name      String
+//   hospital  Hospital?
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+// }

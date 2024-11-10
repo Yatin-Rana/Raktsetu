@@ -18,7 +18,7 @@ const FindDonor = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://localhost:3000/api/donors/find', { bloodGroup: searchTerm });
+      const response = await axios.post('http://localhost:3006/api/donors/find', { bloodGroup: searchTerm });
       setDonors(response.data);
     } catch (err) {
       setError('Failed to fetch donors. Please try again.');
@@ -64,7 +64,7 @@ const FindDonor = () => {
           <div key={donor.id} className="bg-white p-4 rounded shadow">
             <h2 className="text-xl font-semibold">{donor.name}</h2>
             <p className="text-red-600 font-bold">Blood Group: {donor.bloodGroup}</p>
-            <p>Contact: {donor.contact}</p>
+            <p>Contact: {donor.mobile}</p>
           </div>
         ))}
       </div>

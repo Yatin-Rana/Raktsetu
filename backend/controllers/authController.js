@@ -1,6 +1,5 @@
 // authController.js
 
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createUserSchema, loginSchema } = require('../src/schema/userSchema');
@@ -9,15 +8,12 @@ const { ZodError } = require('zod');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = express.Router();
-
-
-// Initialize PrismaClient
+const authenticateToken = require('../middlewares/authenticateToken');
 
 router.post('/signup', async (req, res) => {
     try {
         const { name, email, password, bloodType, location } = createUserSchema.parse(req.body);
 
-        // Check if user already exists
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             return res.status(409).json({ error: 'User with this email already exists' });
@@ -29,7 +25,7 @@ router.post('/signup', async (req, res) => {
                 name,
                 email,
                 password: hashedPassword,
-                bloodType, // This is now directly the enum value
+                bloodType,
                 location
             }
         });
@@ -48,15 +44,10 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-
-// Signin route
 router.post('/signin', async (req, res) => {
     try {
-        console.log('Received signin request');
-
         const { email, password } = loginSchema.parse(req.body);
 
-        console.log('Finding user');
         const user = await prisma.user.findUnique({
             where: { email },
             select: {
@@ -73,27 +64,25 @@ router.post('/signin', async (req, res) => {
             return res.status(401).json({ error: "Invalid email or password" });
         }
 
-        console.log('Verifying password');
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(401).json({ error: "Invalid email or password" });
         }
 
-        console.log('Generating token');
         const token = jwt.sign(
             { userId: user.id },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
+        const name = user.name;
 
-        // Remove sensitive information before sending the response
         const { password: _, ...userWithoutPassword } = user;
 
-        console.log('Login successful');
         res.json({
             message: "Login successful",
             token,
-            user: userWithoutPassword
+            user: userWithoutPassword,
+            name
         });
 
     } catch (error) {
@@ -104,5 +93,7 @@ router.post('/signin', async (req, res) => {
         res.status(500).json({ error: 'Internal server error during login' });
     }
 });
+
+// New profile route
 
 module.exports = router;

@@ -17,10 +17,19 @@ function Navbar() {
   }, [setAuth]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setAuth({ isLoggedIn: false, token: null });
-    console.log("token removed");
-    navigate('/');
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      setAuth({ isLoggedIn: false, token: null, user: null });
+      
+      console.log("User logged out successfully");
+      
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 0);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   const toggleMenu = () => {
@@ -28,7 +37,9 @@ function Navbar() {
   };
 
   const toggleProfileMenu = () => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
+    if (auth.isLoggedIn) {
+      setIsProfileMenuOpen(!isProfileMenuOpen);
+    }
   };
 
   return (
@@ -53,9 +64,11 @@ function Navbar() {
 
           {auth.isLoggedIn ? (
             <>
-              <li><Link to="/donate" className="hover:text-red-200">Donate Blood</Link></li>
               <li><Link to="/find-donor" className="hover:text-red-200">Find a Donor</Link></li>
               <li><Link to="/centers" className="hover:text-red-200">Donation Centers</Link></li>
+              <li><Link to="https://chat.whatsapp.com/Kg0GV394KD56XFncuUQbCx" className="hover:text-red-200">Join Community</Link></li>
+              <li><Link to="/organise" className="hover:text-red-200">Organise a Camp</Link></li>
+              <li><Link to="/view-scheduled-bloodcamps" className="hover:text-red-200">Scheduled Drives</Link></li>
               <li className="relative">
                 <button onClick={toggleProfileMenu} className="flex items-center space-x-1 hover:text-red-200">
                   <span>Profile</span>
@@ -66,8 +79,8 @@ function Navbar() {
                 {isProfileMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</Link>
-                    <Link to="/history" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Donation History</Link>
-                    <Link to="/appointments" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Appointments</Link>
+                    {/* <Link to="/history" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Donation History</Link> */}
+                    {/* <Link to="/appointments" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Appointments</Link> */}
                     <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</button>
                   </div>
                 )}
@@ -75,7 +88,6 @@ function Navbar() {
             </>
           ) : (
             <>
-              <li><Link to="/organise" className="hover:text-red-200">Organise a Camp</Link></li>
               <li><Link to="/joinus" className="hover:text-red-200 bg-white text-red-600 px-4 py-2 rounded-full">Join Us</Link></li>
             </>
           )}
@@ -92,12 +104,11 @@ function Navbar() {
             
             {auth.isLoggedIn ? (
               <>
-                <li><Link to="/donate" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Donate Blood</Link></li>
                 <li><Link to="/find-donor" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Find a Donor</Link></li>
                 <li><Link to="/centers" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Donation Centers</Link></li>
                 <li><Link to="/profile" className="block hover:text-red-200 p-2" onClick={toggleMenu}>My Profile</Link></li>
-                <li><Link to="/history" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Donation History</Link></li>
-                <li><Link to="/appointments" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Appointments</Link></li>
+                {/* <li><Link to="/history" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Donation History</Link></li> */}
+                {/* <li><Link to="/appointments" className="block hover:text-red-200 p-2" onClick={toggleMenu}>Appointments</Link></li> */}
                 <li><button onClick={() => { handleLogout(); toggleMenu(); }} className="block hover:text-red-200 w-full text-left p-2">Sign Out</button></li>
               </>
             ) : (

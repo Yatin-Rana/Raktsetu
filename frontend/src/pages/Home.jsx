@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import authState from '../authState';
 import mainLogo from '../images/mainlogo(1).png';
 import background from '../images/homebg.jpg';
+import { Link } from 'react-router-dom';
 
 function Home() {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ function Home() {
             <div className="flex-1 bg-[#fc6966] bg-opacity-55 backdrop-blur-sm flex items-center justify-center p-4">
                 <div className='flex flex-col w-full md:w-[70%] lg:w-[55%] bg-[#f68d81] gap-y-4 md:gap-y-6 p-4 md:p-6 bg-opacity-55 backdrop-blur-sm shadow-lg rounded-lg'>
                     <div className='text-xl md:text-2xl lg:text-3xl italic font-semibold text-center'>Save Lives, One <span className='text-red-600'>Donation</span> at a Time</div>
-                    <div 
+                    <div
                         className='text-2xl md:text-3xl lg:text-4xl font-bold text-center text-white animate-pulse cursor-pointer hover:text-red-100 transition-colors duration-300'
                         onClick={handleJoinUsClick}
                     >
@@ -52,17 +53,17 @@ function Home() {
 
     const LoggedInContent = () => (
         <div className="h-full bg-white bg-opacity-55 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-8">Welcome back, <span className='text-red-600'>{auth.user?.name || 'Buddy'}!</span></h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-8 text-center">Welcome back, <span className='text-red-600'>{auth.user?.name || 'Buddy'}!</span></h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
-                <button 
-                    onClick={handleDonateClick}
-                    className="bg-red-600 text-white text-xl md:text-2xl font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors duration-300"
+                <Link
+                    to="https://chat.whatsapp.com/Kg0GV394KD56XFncuUQbCx"
+                    className="bg-red-600 text-white text-xl md:text-2xl font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors duration-300 flex items-center justify-center text-center"
                 >
-                    Donate Blood
-                </button>
-                <button 
+                    Join Community
+                </Link>
+                <button
                     onClick={handleFindDonorClick}
-                    className="bg-blue-600 text-white text-xl md:text-2xl font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                    className="bg-blue-600 text-white text-xl md:text-2xl font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center text-center"
                 >
                     Find a Donor
                 </button>
