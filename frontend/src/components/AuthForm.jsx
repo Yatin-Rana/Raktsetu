@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import authState from '../authState';
 
-// Create an axios instance with a base URL
 const api = axios.create({
-  baseURL: 'http://localhost:3006/api' // Replace with your actual API base URL
+  baseURL: 'http://localhost:3006/api/auth'
 });
 
 const AuthForm = () => {
@@ -23,6 +22,7 @@ const AuthForm = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [auth, setAuth] = useRecoilState(authState);
+  const [showModal, setShowModal] = useState(false); // Modal state
 
   const navigate = useNavigate();
 
@@ -38,26 +38,32 @@ const AuthForm = () => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
+  
+    if (isSignUp && !formData.bloodType) {
+      setError("Blood type is required.");
+      setIsLoading(false);
+      return;
+    }
+  
     try {
-      const endpoint = isSignUp ? '/auth/signup' : '/auth/signin';
-      const dataToSend = isSignUp ? formData : { email: formData.email, password: formData.password };
-
+      const endpoint = isSignUp ? '/signup' : '/signin';
+      const dataToSend = {
+        ...formData,
+        bloodType: formData.bloodType || "",
+      };
+  
       const response = await api.post(endpoint, dataToSend);
-
-      console.log(response.data);
-
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userId', response.data.user.id);
       setAuth({ isLoggedIn: true, token: response.data.token });
-      // const name = response.data.name;
-
-      const userId = response.data.user.id;
-      // localStorage.setItem('name',name)
-      localStorage.setItem('userId', userId)
-
-      navigate('/');
+  
+      if (isSignUp) {
+        setShowModal(true); // Show modal on successful sign-up
+        navigate('/joinus');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
-      console.error('Login failed:', error);
       setError(error.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -106,10 +112,9 @@ const AuthForm = () => {
             )}
             <div className="mb-4">
               <input
-                id="email-address"
+                id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
@@ -122,7 +127,6 @@ const AuthForm = () => {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
@@ -148,28 +152,30 @@ const AuthForm = () => {
                   <select
                     id="bloodType"
                     name="bloodType"
+                    required
                     className="mt-4 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
                     value={formData.bloodType}
                     onChange={handleInputChange}
                   >
-                    <option value="">Blood Type (if known)</option>
-                    <option value="A_POSITIVE">A+</option>
-                    <option value="A_NEGATIVE">A-</option>
-                    <option value="B_POSITIVE">B+</option>
-                    <option value="B_NEGATIVE">B-</option>
-                    <option value="AB_POSITIVE">AB+</option>
-                    <option value="AB_NEGATIVE">AB-</option>
-                    <option value="O_POSITIVE">O+</option>
-                    <option value="O_NEGATIVE">O-</option>
+                    <option value="">Blood Type (if signing up)</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
                   </select>
                 </div>
-                <div>
+                <div className="mb-4">
                   <input
                     id="location"
                     name="location"
                     type="text"
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
-                    placeholder="City or Zip Code"
+                    required
+                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
+                    placeholder="Location"
                     value={formData.location}
                     onChange={handleInputChange}
                   />
@@ -177,30 +183,44 @@ const AuthForm = () => {
               </>
             )}
           </div>
-
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
-          <div>
+          <div className="text-sm text-red-500">
+            {error}
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            {isLoading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
+          </button>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            {isSignUp ? 'Already a member?' : 'New to our community?'}{' '}
             <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
+              type="button"
+              className="font-medium text-red-600 hover:text-red-500"
+              onClick={toggleAuthMode}
             >
-              {isLoading ? 'Processing...' : (isSignUp ? 'Join the Cause' : 'Sign In')}
+              {isSignUp ? 'Sign In' : 'Sign Up'}
+            </button>
+          </p>
+        </form>
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-semibold mb-4">Thank You for Signing Up!</h2>
+            <p>Your journey as a lifesaver starts here!</p>
+            <button
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={() => setShowModal(false)}
+            >
+              Close
             </button>
           </div>
-        </form>
-        <div className="text-center">
-          <button
-            onClick={toggleAuthMode}
-            className="font-medium text-red-600 hover:text-red-500"
-          >
-            {isSignUp
-              ? 'Already a donor? Sign In'
-              : "New donor? Join our community"}
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
