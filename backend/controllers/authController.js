@@ -72,7 +72,7 @@ router.post('/signup', async (req, res) => {
       // redirectTo: '/joinus' // Return user details as expected by frontend
     });
   } catch (error) {
-    // console.error('Received blood type:', bloodType);  // Log the bloodType
+    console.error('Received blood type:', bloodType);  // Log the bloodType
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Internal server error during registration' });
   }

@@ -22,7 +22,6 @@ const AuthForm = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [auth, setAuth] = useRecoilState(authState);
-  const [showModal, setShowModal] = useState(false); // Modal state
 
   const navigate = useNavigate();
 
@@ -38,32 +37,38 @@ const AuthForm = () => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-  
+
+    // If it's a sign-up form, check if bloodType is selected
     if (isSignUp && !formData.bloodType) {
       setError("Blood type is required.");
       setIsLoading(false);
       return;
     }
-  
+
     try {
       const endpoint = isSignUp ? '/signup' : '/signin';
+      
+      // Ensure bloodType is sent correctly (use empty string if not selected)
       const dataToSend = {
         ...formData,
-        bloodType: formData.bloodType || "",
+        bloodType: formData.bloodType || "", // Ensure bloodType is always set
       };
-  
+
+      console.log("Data being sent:", dataToSend); // Debug log for form data
+
       const response = await api.post(endpoint, dataToSend);
+
+      console.log(response.data);
+
+      // Store token and userId in localStorage and update auth state
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userId', response.data.user.id);
       setAuth({ isLoggedIn: true, token: response.data.token });
-  
-      if (isSignUp) {
-        setShowModal(true); // Show modal on successful sign-up
-        navigate('/joinus');
-      } else {
-        navigate('/');
-      }
+
+      // Redirect to home page after successful login/signup
+      navigate('/');
     } catch (error) {
+      console.error('Login failed:', error);
       setError(error.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -205,22 +210,6 @@ const AuthForm = () => {
           </p>
         </form>
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-2xl font-semibold mb-4">Thank You for Signing Up!</h2>
-            <p>Your journey as a lifesaver starts here!</p>
-            <button
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              onClick={() => setShowModal(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
