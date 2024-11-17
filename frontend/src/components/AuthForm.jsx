@@ -37,34 +37,36 @@ const AuthForm = () => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
+  
     // If it's a sign-up form, check if bloodType is selected
     if (isSignUp && !formData.bloodType) {
       setError("Blood type is required.");
       setIsLoading(false);
       return;
     }
-
+  
     try {
       const endpoint = isSignUp ? '/signup' : '/signin';
-      
+  
       // Ensure bloodType is sent correctly (use empty string if not selected)
       const dataToSend = {
         ...formData,
         bloodType: formData.bloodType || "", // Ensure bloodType is always set
       };
-
+  
       console.log("Data being sent:", dataToSend); // Debug log for form data
-
+  
       const response = await api.post(endpoint, dataToSend);
-
+  
       console.log(response.data);
-
-      // Store token and userId in localStorage and update auth state
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.user.id);
-      setAuth({ isLoggedIn: true, token: response.data.token });
-
+  
+      // Only store token and userId in localStorage if signing in
+      if (!isSignUp) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userId', response.data.user.id);
+        setAuth({ isLoggedIn: true, token: response.data.token });
+      }
+  
       // Redirect to home page after successful login/signup
       navigate('/');
     } catch (error) {
@@ -74,7 +76,7 @@ const AuthForm = () => {
       setIsLoading(false);
     }
   };
-
+  
   const toggleAuthMode = () => {
     setIsSignUp(!isSignUp);
     setFormData({

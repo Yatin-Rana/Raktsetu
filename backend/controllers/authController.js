@@ -26,6 +26,8 @@ const bloodTypeMapping = {
 };
 
 // Sign up route
+
+
 router.post('/signup', async (req, res) => {
   try {
     let { name, email, password, bloodType, location, mobile } = req.body;
@@ -61,18 +63,13 @@ router.post('/signup', async (req, res) => {
       }
     });
 
-    // Generate JWT token (replace 'your_jwt_secret' with your actual secret)
-    // const token = jwt.sign({ userId: user.id, email: user.email }, 'yatin', { expiresIn: '1h' });
-
-    // Send response with user and token
+    // Send response without token
     res.status(201).json({
       message: "Sign-up successful",
-      // token,
-      user: { id: user.id, name: user.name, email: user.email } ,
-      // redirectTo: '/joinus' // Return user details as expected by frontend
+      user: { id: user.id, name: user.name, email: user.email }
     });
   } catch (error) {
-    console.error('Received blood type:', bloodType);  // Log the bloodType
+    console.error('Received blood type:', bloodType);
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Internal server error during registration' });
   }
